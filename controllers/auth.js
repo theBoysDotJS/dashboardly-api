@@ -1,5 +1,5 @@
 const express = require('express');
-var md5 = require('md5');
+const md5 = require('md5');
 
 const onlyLoggedIn = require('../lib/only-logged-in');
 
@@ -8,6 +8,7 @@ module.exports = (dataLoader) => {
 
   // Create a new user (signup)
   authController.post('/users', (req, res) => {
+
     dataLoader.createUser({
       email: req.body.email,
       password: req.body.password
@@ -43,8 +44,13 @@ module.exports = (dataLoader) => {
   // Retrieve current user
   authController.get('/me', onlyLoggedIn, (req, res) => {
     // TODO: this is up to you to implement :)
-
-    res.status(500).json({ error: 'not implemented' });
+    dataLoader.getUserFromSession(req.body.token)
+    .then(user => {
+      console.log(user)
+    return getAvatar(user)
+    })
+    .then(() => res.status(204).end())
+    .catch(err => res.status(400).json(err));
   });
 
   return authController;
