@@ -7,7 +7,7 @@ module.exports = (dataLoader) => {
 
   // Modify a bookmark
   bookmarksController.patch('/:id', onlyLoggedIn, (req, res) => {
-
+	console.log('ok working')
     dataLoader.bookmarkBelongsToUser(req.params.id, req.user.id) // need to create this function
     .then(() => {
       return dataLoader.updateBookmark(req.params.id, { //need to create this function
@@ -21,7 +21,7 @@ module.exports = (dataLoader) => {
 
   // Delete a bookmark
   bookmarksController.delete('/:id', onlyLoggedIn, (req, res) => {
-
+	console.log('ok working')
     dataLoader.bookmarkBelongsToUser(req.params.id, req.user.id) // need to create function
     .then(() => {
       return dataLoader.deleteBoard(req.params.id); //need to create function
