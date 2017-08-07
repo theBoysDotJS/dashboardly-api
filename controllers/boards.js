@@ -7,6 +7,7 @@ module.exports = (dataLoader) => {
 
   // Retrieve a list of boards
   boardsController.get('/', (req, res) => {
+	console.log(req.body)
     dataLoader.getAllBoards({
       page: req.query.page,
       limit: req.query.count
@@ -27,7 +28,7 @@ module.exports = (dataLoader) => {
   // Create a new board
   boardsController.post('/', onlyLoggedIn, (req, res) => {
     dataLoader.createBoard({
-      ownerId: req.user.id,
+      ownerId: req.user.users_id,
       title: req.body.title,
       description: req.body.description
     })
@@ -39,7 +40,8 @@ module.exports = (dataLoader) => {
   // Modify an owned board
   boardsController.patch('/:id', onlyLoggedIn, (req, res) => {
     // First check if the board to be PATCHed belongs to the user making the request
-    dataLoader.boardBelongsToUser(req.params.id, req.user.id)
+	console.log(req.user)
+    dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
     .then(() => {
       return dataLoader.updateBoard(req.params.id, {
         title: req.body.title,
@@ -54,7 +56,7 @@ module.exports = (dataLoader) => {
   // Delete an owned board
   boardsController.delete('/:id', onlyLoggedIn, (req, res) => {
     // First check if the board to be DELETEd belongs to the user making the request
-    dataLoader.boardBelongsToUser(req.params.id, req.user.id)
+    dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
     .then(() => {
       return dataLoader.deleteBoard(req.params.id);
     })
@@ -72,13 +74,30 @@ module.exports = (dataLoader) => {
 
   // Create a new bookmark under a board
   boardsController.post('/:id/bookmarks', onlyLoggedIn, (req, res) => {
-	dataLoader.createBookmark({
-		title: req.body.title,
-		description: req.body.description
+	console.log('ooo yaaaa')
+	dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
+	.then(() => {
+		dataLoader.createBookmark({
+			ownerId: req.user.users_id,
+			boardId: req.params.id,
+			title: req.body.title,
+			url: req.body.url
+		})
 	})
     .then(board => res.status(201).json(board))
     .catch(err => res.status(400).json(err));
   });
+
+    // Delete an owned board
+    boardsController.delete('/:id/bookmarks', onlyLoggedIn, (req, res) => {
+      // First check if the board to be DELETEd belongs to the user making the request
+      dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
+      .then(() => {
+        return dataLoader.deleteBoookmark(req.params.id);
+      })
+      .then(() => res.status(204).end())
+      .catch(err => res.status(400).json(err));
+    });
 
   return boardsController;
 };

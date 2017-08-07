@@ -29,6 +29,8 @@ module.exports = (dataLoader) => {
 
   // Delete a session (logout)
   authController.delete('/sessions', onlyLoggedIn, (req, res) => {
+	console.log(req.sessionToken, 'session token')
+	console.log(req.body, 'body')
     if (req.sessionToken === req.body.token) {
       dataLoader.deleteToken(req.body.token)
       .then(() => res.status(204).end())
