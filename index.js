@@ -1,5 +1,6 @@
 const express = require('express');
 const mysql = require('promise-mysql');
+const cors = require('cors')
 
 // Express middleware
 const bodyParser = require('body-parser');
@@ -25,6 +26,7 @@ const dataLoader = new DashboardlyDataLoader(connection);
 
 // Express initialization
 const app = express();
+app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(checkLoginToken(dataLoader));
