@@ -74,7 +74,6 @@ module.exports = (dataLoader) => {
 
   // Create a new bookmark under a board
   boardsController.post('/:id/bookmarks', onlyLoggedIn, (req, res) => {
-	console.log('ooo yaaaa')
 	dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
 	.then(() => {
 		dataLoader.createBookmark({
