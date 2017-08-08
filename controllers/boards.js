@@ -52,7 +52,6 @@ module.exports = (dataLoader) => {
     .catch(err => res.status(400).json(err));
   });
 
-
   // Delete an owned board
   boardsController.delete('/:id', onlyLoggedIn, (req, res) => {
     // First check if the board to be DELETEd belongs to the user making the request
@@ -75,7 +74,10 @@ module.exports = (dataLoader) => {
   // Create a new bookmark under a board
   boardsController.post('/:id/bookmarks', onlyLoggedIn, (req, res) => {
 	dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
-	.then(() => {
+	.then((r) => {
+		if(!r) {
+			res.json(Error)
+		}
 		dataLoader.createBookmark({
 			ownerId: req.user.users_id,
 			boardId: req.params.id,
@@ -87,12 +89,29 @@ module.exports = (dataLoader) => {
     .catch(err => res.status(400).json(err));
   });
 
+   boardsController.patch('/:id/bookmarks/:bookmarkId', onlyLoggedIn, (req, res) => {
+      // First check if the board to be PATCHed belongs to the user making the request
+  	console.log(req.user, 'wapwapwapwap')
+      dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
+      .then(() => {
+        return dataLoader.updateBookmark(req.params.bookmarkId, {
+          title: req.body.title,
+		  url: req.body.url
+        });
+      })
+      .then(data => {
+		  console.log(data, 'this is data')
+		  res.json(data)
+	  })
+      .catch(err => res.status(400).json(err));
+    });
+
     // Delete an owned board
-    boardsController.delete('/:id/bookmarks', onlyLoggedIn, (req, res) => {
+    boardsController.delete('/:id/bookmarks/:bookmarkId', onlyLoggedIn, (req, res) => {
       // First check if the board to be DELETEd belongs to the user making the request
       dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
       .then(() => {
-        return dataLoader.deleteBoookmark(req.params.id);
+        return dataLoader.deleteBookmark(req.params.bookmarkId);
       })
       .then(() => res.status(204).end())
       .catch(err => res.status(400).json(err));
