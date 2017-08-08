@@ -20,12 +20,12 @@ module.exports = (dataLoader) => {
 
   // Create a new session (login)
   authController.post('/sessions', (req, res) => {
-    dataLoader.createTokenFromCredentials(
-      req.body.email,
-      req.body.password
-    )
-    .then(token => res.status(201).json({ token: token }))
-    .catch(err => res.status(401).json(err));
+		 dataLoader.createTokenFromCredentials(
+	      req.body.email,
+	      req.body.password
+	    )
+	    .then(token => res.status(201).json({ token: token }))
+	    .catch(err => res.status(401).json(err));
   });
 
 
@@ -45,10 +45,8 @@ module.exports = (dataLoader) => {
 
   // Retrieve current user
   authController.get('/me', onlyLoggedIn, (req, res) => {
-	let user = req.user.users_id;
-    return dataLoader.getAvatar(user)
-    	.then(() => res.status(204).end())
-    	.catch(err => res.status(400).json(err));
+	    dataLoader.getEmailHash(req.user);
+		res.send(req.user);
   });
 
   return authController;
