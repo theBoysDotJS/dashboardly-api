@@ -28,6 +28,7 @@ module.exports = (dataLoader) => {
 
   // Create a new board
   boardsController.post('/', onlyLoggedIn, (req, res) => {
+	console.log(req.body, 'the body', req.users, 'tha users')
     dataLoader.createBoard({
       ownerId: req.user.users_id,
       title: req.body.title,
@@ -39,7 +40,7 @@ module.exports = (dataLoader) => {
 
 
   // Modify an owned board
-  boardsController.patch('/:id', onlyLoggedIn, (req, res) => {
+  boardsController.patch('/:id', (req, res) => {
     // First check if the board to be PATCHed belongs to the user making the request
 	console.log(req.user)
     dataLoader.boardBelongsToUser(req.params.id, req.user.users_id)
