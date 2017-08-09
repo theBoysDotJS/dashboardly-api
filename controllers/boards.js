@@ -7,12 +7,13 @@ module.exports = (dataLoader) => {
 
   // Retrieve a list of boards
   boardsController.get('/', (req, res) => {
-	console.log(req.body)
     dataLoader.getAllBoards({
       page: req.query.page,
       limit: req.query.count
     })
-    .then(data => res.json(data))
+    .then(data => {
+		res.json(data)
+	})
     .catch(err => res.status(400).json(err));
   });
 

@@ -8,7 +8,6 @@ module.exports = (dataLoader) => {
 
   // Create a new user (signup)
   authController.post('/users', (req, res) => {
-
     dataLoader.createUser({
       email: req.body.email,
       password: req.body.password
@@ -20,19 +19,20 @@ module.exports = (dataLoader) => {
 
   // Create a new session (login)
   authController.post('/sessions', (req, res) => {
-		 dataLoader.createTokenFromCredentials(
+		dataLoader.createTokenFromCredentials(
 	      req.body.email,
 	      req.body.password
 	    )
-	    .then(token => res.status(201).json({ token: token }))
+	    .then(token => {
+			res.status(201).json({ token: token })
+		})
 	    .catch(err => res.status(401).json(err));
   });
 
 
   // Delete a session (logout)
   authController.delete('/sessions', onlyLoggedIn, (req, res) => {
-	console.log(req.sessionToken, 'session token')
-	console.log(req.body, 'body')
+	console.log(req.body)
     if (req.sessionToken === req.body.token) {
       dataLoader.deleteToken(req.body.token)
       .then(() => res.status(204).end())
@@ -42,9 +42,9 @@ module.exports = (dataLoader) => {
     }
   });
 
-
   // Retrieve current user
   authController.get('/me', onlyLoggedIn, (req, res) => {
+	  	console.log(req.users, 'user obj')
 	    dataLoader.getEmailHash(req.user);
 		res.send(req.user);
   });
