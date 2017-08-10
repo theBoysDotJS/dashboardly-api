@@ -1,5 +1,4 @@
 const express = require('express');
-const md5 = require('md5');
 
 const onlyLoggedIn = require('../lib/only-logged-in');
 
@@ -8,6 +7,7 @@ module.exports = (dataLoader) => {
 
   // Create a new user (signup)
   authController.post('/users', (req, res) => {
+	console.log(req.body, 'body in auth users')
     dataLoader.createUser({
       email: req.body.email,
       password: req.body.password
@@ -19,6 +19,7 @@ module.exports = (dataLoader) => {
 
   // Create a new session (login)
   authController.post('/sessions', (req, res) => {
+	    console.log(req.body)
 		dataLoader.createTokenFromCredentials(
 	      req.body.email,
 	      req.body.password
@@ -32,22 +33,17 @@ module.exports = (dataLoader) => {
 
   // Delete a session (logout)
   authController.delete('/sessions', onlyLoggedIn, (req, res) => {
-<<<<<<< HEAD
-	console.log(req.body)
-=======
->>>>>>> bookmarks
     if (req.sessionToken === req.body.token) {
       dataLoader.deleteToken(req.body.token)
       .then(() => res.status(204).end())
       .catch(err => res.status(400).json(err));
     } else {
       res.status(401).json({ error: 'Invalid session token' });
-    }
+  }
   });
 
   // Retrieve current user
   authController.get('/me', onlyLoggedIn, (req, res) => {
-	  	console.log(req.users, 'user obj')
 	    dataLoader.getEmailHash(req.user);
 		res.send(req.user);
   });
