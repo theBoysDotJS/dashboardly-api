@@ -34,7 +34,10 @@ module.exports = (dataLoader) => {
       title: req.body.title,
       description: req.body.description
     })
-    .then(data => res.status(201).json(data))
+    .then(data => {
+		console.log(data, 'this is the data after createBoard in the post request')
+		res.status(201).json(data)
+	})
     .catch(err => res.status(400).json(err));
   });
 
